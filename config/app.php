@@ -228,5 +228,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
-
+    'available_locales' => ['uk', 'en', 'ru'],
+    'default_locale' => 'uk',
 ];

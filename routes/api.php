@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\CreateBinar;
+use App\Http\Controllers\ManageBinar;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'binar'], function() {
+    Route::post('create', [CreateBinar::class, 'store']);
+    Route::get("fill", [ManageBinar::class, "fillTable"]);
+    Route::get('{binar}/related', [ManageBinar::class, "getRelated"]);
 });
