@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
         Binar::create([
             'id' => 1,
             'path' => '1',
-            'pos_path' => '1',
             'level' => 1,
         ]);
     }

@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers\Traits;
 
-use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -53,7 +52,7 @@ trait ResponseTrait
             "status" => Response::HTTP_UNPROCESSABLE_ENTITY,
             'message' => $message,
             'errors' => $errors,
-        ], 422);
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**

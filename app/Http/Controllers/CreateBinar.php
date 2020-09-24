@@ -26,14 +26,13 @@ class CreateBinar extends Controller
                 throw new ValidationException([], "Binar already exists");
             }
             /** @var Binar $parent */
-            $parent = Binar::select(['path', 'pos_path', 'level'])->where('id', $p_id)->first();
+            $parent = Binar::select(['path', 'level'])->where('id', $p_id)->first();
             $id = Binar::max('id') + 1;
             $binar = Binar::create([
                 'id' => $id,
                 'parent_id' => $p_id,
                 'position' => $pos,
                 'path' => $parent->path.'.'.$id,
-                "pos_path" => $parent->pos_path.'.'.$pos,
                 'level' => $parent->level + 1,
             ]);
 

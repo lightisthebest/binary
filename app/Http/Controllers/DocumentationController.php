@@ -20,7 +20,6 @@ class DocumentationController extends Controller
             file_put_contents($file_name, json_encode($arr));
             return redirect('/docs');
         } catch (Throwable $e) {
-            dd($e);
             return self::handleException($e);
         }
     }
