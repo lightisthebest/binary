@@ -17,7 +17,8 @@ class CreateBinarsTable extends Migration
             $table->id();
             $table->bigInteger('parent_id')->unsigned()->index()->nullable();
             $table->tinyInteger('position')->nullable();
-            $table->string('path');
+            $table->text('path');
+            $table->text('pos_path');
             $table->bigInteger('level');
         });
     }

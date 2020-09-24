@@ -25,7 +25,7 @@ class BinarRequest extends FormRequest
     {
         return [
             "parent_id" => "required|exists:binars,id|integer",
-            "position" => "required|in:1,2"
+            "position" => "required|in:1,2|integer"
         ];
     }
 

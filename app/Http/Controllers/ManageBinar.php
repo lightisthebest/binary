@@ -24,7 +24,7 @@ class ManageBinar extends Controller
             $new_id = Binar::max('id') + 1;
             $collection = Binar::where('level', '<=', 5)->get();
             for ($i = 2; $i <= $this->depth; $i++) {
-                $parents = $collection->where('level', $i - 1);
+                $parents = $collection->where('level', $i - 1)->sortBy('pos_path');
                 foreach ($parents as $parent) {
                     foreach ([1, 2] as $pos) {
                         if (!$collection->where('parent_id', $parent->id)->where('position', $pos)->first()) {
@@ -32,7 +32,8 @@ class ManageBinar extends Controller
                                 'id' => $new_id,
                                 'parent_id' => $parent->id,
                                 'position' => $pos,
-                                'path' => $parent->path.'.'.$new_id,
+                                'path' => $parent->path . '.' . $new_id,
+                                'pos_path' => $parent->pos_path . '.' . $pos,
                                 'level' => $i
                             ];
                             $collection->add((object)$binar);
@@ -58,15 +59,29 @@ class ManageBinar extends Controller
     {
         try {
             if ($binar->id === 1) {
-                $data = Binar::all();
+                $query = Binar::query();
             } else {
                 $ids = explode('.', $binar->path);
-                $data = Binar::whereIn('id', $ids)
-                    ->orWhere('path', 'LIKE', "%.{$binar->id}.%")
-                    ->get();
+                $query = Binar::whereIn('id', $ids)
+                    ->orWhere('path', 'LIKE', "%.{$binar->id}.%");
             }
-            //todo continue here
+            $data = $query->orderByDesc('level')->orderBy('pos_path')->get();
 
+            $tree = [];
+            foreach ($data as $key => $item) {
+                if (array_key_exists($item->id, $tree)) {
+                    $tree[$item->id] = array_merge($item->toArray(), $tree[$item->id]);
+                } else {
+                    $tree[$item->id] = $item->toArray();
+                }
+                if ($item->parent_id) {
+                    $tree[$item->parent_id]['children'][] = $tree[$item->id];
+                    unset($tree[$item->id]);
+                    $data->forget($key);
+                }
+            }
+
+            return response()->json(array_merge(SUCCESS_ARRAY, ['data' => $tree[1]]));
         } catch (Throwable $e) {
             return self::handleException($e);
         }

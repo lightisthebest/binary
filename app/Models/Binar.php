@@ -22,6 +22,7 @@ use Illuminate\Database\Query\Builder;
  * @property int $parent_id
  * @property int $position
  * @property string $path
+ * @property string $pos_path
  * @property int $level
  */
 class Binar extends Model
@@ -33,8 +34,11 @@ class Binar extends Model
         'parent_id',
         'position',
         'path',
+        'pos_path',
         'level',
     ];
+
+    protected $hidden = ['pos_path'];
 
     /**
      * @return BelongsTo

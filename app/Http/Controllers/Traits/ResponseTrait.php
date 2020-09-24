@@ -36,20 +36,6 @@ trait ResponseTrait
         return response()->json($response, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-
-    /**
-     * @param string|null $message
-     * @return JsonResponse
-     */
-    public static function apiNotFoundResponse(?string $message = null): JsonResponse
-    {
-        if (is_null($message)) $message = 'Data is not found.';
-        return response()->json([
-            'status' => Response::HTTP_NOT_FOUND,
-            'message' => $message
-        ], Response::HTTP_NOT_FOUND);
-    }
-
     /**
      * @param array $errors
      * @param null $message
@@ -57,8 +43,14 @@ trait ResponseTrait
      */
     public static function sendValidationErrors($errors = [], $message = null): JsonResponse
     {
-        if (empty($message)) $message = 'The given data was invalid.';
+        if (empty($errors)) {
+            $errors = (object)$errors;
+        }
+        if (empty($message)) {
+            $message = 'The given data was invalid.';
+        }
         return response()->json([
+            "status" => Response::HTTP_UNPROCESSABLE_ENTITY,
             'message' => $message,
             'errors' => $errors,
         ], 422);
@@ -70,9 +62,6 @@ trait ResponseTrait
      */
     public static function handleException(Throwable $e): JsonResponse
     {
-        if ($e instanceof NotFoundException) {
-            return self::apiNotFoundResponse($e->getMessage());
-        }
         if ($e instanceof ValidationException) {
             return self::sendValidationErrors($e->getErrors(), $e->getMessage());
         }

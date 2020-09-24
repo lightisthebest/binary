@@ -6,6 +6,7 @@ use App\Exceptions\ValidationException;
 use App\Http\Controllers\Traits\ResponseTrait;
 use App\Http\Requests\BinarRequest;
 use App\Models\Binar;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class CreateBinar extends Controller
@@ -14,7 +15,7 @@ class CreateBinar extends Controller
 
     /**
      * @param BinarRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(BinarRequest $request)
     {
@@ -24,13 +25,15 @@ class CreateBinar extends Controller
             if (Binar::where('parent_id', $p_id)->where('position', $pos)->exists()) {
                 throw new ValidationException([], "Binar already exists");
             }
-            $parent = Binar::select(['path', 'level'])->where('id', $p_id)->first();
+            /** @var Binar $parent */
+            $parent = Binar::select(['path', 'pos_path', 'level'])->where('id', $p_id)->first();
             $id = Binar::max('id') + 1;
             $binar = Binar::create([
                 'id' => $id,
                 'parent_id' => $p_id,
                 'position' => $pos,
                 'path' => $parent->path.'.'.$id,
+                "pos_path" => $parent->pos_path.'.'.$pos,
                 'level' => $parent->level + 1,
             ]);
 
